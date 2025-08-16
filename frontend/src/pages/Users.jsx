@@ -1,6 +1,6 @@
 import React from 'react'
 
-function Orders() {
+function Users() {
   return (
     <div>
       
@@ -8,4 +8,4 @@ function Orders() {
   )
 }
 
-export default Orders
+export default Users

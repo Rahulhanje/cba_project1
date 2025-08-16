@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../../api";
+import { AuthContext } from "../context/AuthContext";
 
 function SignIn() {
+  const { login } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -18,11 +20,25 @@ function SignIn() {
     const userData = { email, password };
 
     try {
-      const res = await API.post(`/auth/login`, userData); //change the URL to your backend endpoint
+      const res = await API.post(`/auth/login`, userData);
+      login(res.data); //save user in context
       localStorage.setItem("token", res.data.token); // Store the token in local storage
-      localStorage.setItem("user", JSON.stringify(res.data.user)); // Store user data in local storage
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          _id: res.data.id,
+          name: res.data.name,
+          email: res.data.email,
+          isAdmin: res.data.isAdmin,
+        })
+      ); // Store user data in local storage
       setIsLoading(false);
-      navigate("/"); // Redirect to dashboard after successful sign-in
+      if (res.data.isAdmin) {
+        navigate("/admin"); // Redirect to admin dashboard if user is admin
+      } else {
+        navigate("/"); // Redirect to dashboard after successful sign-in
+      }
+      console.log("User signed in successfully:", res.data);
     } catch (err) {
       setError(
         err.response?.data?.message ||

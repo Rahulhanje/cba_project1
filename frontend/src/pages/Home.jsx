@@ -1,11 +1,14 @@
-import React from 'react'
+import React from "react";
+import ProductList from "../components/ProductList";
 
 function Home() {
+  const user = JSON.parse(localStorage.getItem("user"));
+
   return (
     <div>
-      <h1>Home</h1>
+      <ProductList />
     </div>
-  )
+  );
 }
 
-export default Home
+export default Home;

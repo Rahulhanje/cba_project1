@@ -124,3 +124,27 @@ export const updateOrderStatus = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+export const getAllRevenue = async (req, res) => {
+  try {
+    const revenue = await Order.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: "$totalPrice" },
+        },
+      },
+    ]);
+
+    if (!revenue || revenue.length === 0) {
+      return res.status(404).json({ message: "No revenue found" });
+    }
+
+    res.status(200).json({ revenue: revenue[0].totalRevenue });
+  } catch (error) {
+    console.log("Error fetching all orders revenue: ", error);
+    res
+      .status(500)
+      .json({ message: "Error while fetching revenue", error: error.message });
+  }
+};

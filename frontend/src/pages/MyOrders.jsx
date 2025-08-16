@@ -1,7 +1,7 @@
 import React from "react";
 
-function Cart() {
+function MyOrders() {
   return <div></div>;
 }
 
-export default Cart;
+export default MyOrders;

@@ -1,20 +1,24 @@
 import React, { useState } from "react";
 import API from "../../api";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function Signup() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const Navigate = useNavigate();
 
   const handleSignup = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
-    const userData = { email, password };
+    const userData = { name, email, password, isAdmin };
 
     try {
       const res = await API.post("/auth/register", userData); //change later
@@ -22,7 +26,7 @@ function Signup() {
       Navigate("/signin");
     } catch (err) {
       setError(
-        err.respomse?.data?.message ||
+        err.response?.data?.message ||
           "Failed to signup, Please check your credentials"
       );
       console.error("Error signing up: ", err);
@@ -109,6 +113,21 @@ function Signup() {
             </div>
           </div>
 
+          {/* account type */}
+          <div className="mb-6">
+            <label htmlFor="isAdmin" className="block mb-2">
+              Account Type
+            </label>
+            <select
+              value={isAdmin ? "admin" : "user"}
+              onChange={(e) => setIsAdmin(e.target.value === "admin")}
+              className="w-full p-3 px-1 border border-gray-400 outline-none rounded-xl"
+            >
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+
           {/* error message */}
           {error && <div className="text-red-500 m-2">{error}</div>}
 
@@ -121,6 +140,15 @@ function Signup() {
             Sign Up
           </button>
         </form>
+
+        <div className="mt-4">
+          <p className="text-gray-500">
+            Already have an account?{" "}
+            <Link to="/signin" className="text-blue-500 hover:underline">
+              Log in
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
